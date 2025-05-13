@@ -49,9 +49,6 @@ class MainActivity : ComponentActivity() {
                         .height(300.dp)
                         .align(Alignment.BottomCenter),
                     style = ScaleStyle( scaleWidth = 150.dp),
-                    initialWeight = weight,
-                    minWeight = 20,
-                    maxWeight = 250
                 ) {
                     weight = it
                 }

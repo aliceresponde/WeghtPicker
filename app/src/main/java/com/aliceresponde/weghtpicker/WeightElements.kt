@@ -41,7 +41,7 @@ fun Scale(
     var angle by remember { mutableFloatStateOf(0f) }
 
     val textMeasurer = rememberTextMeasurer()
-    var dragStartAngle = remember { mutableFloatStateOf(0f) }
+    var dragStartAngle by remember { mutableFloatStateOf(0f) }
     val oldAngle = remember { mutableFloatStateOf(angle) }
 
     Canvas(
@@ -49,7 +49,7 @@ fun Scale(
             .pointerInput(true) {
                 detectDragGestures(
                     onDragStart = {offset ->
-                        dragStartAngle.floatValue = -atan2(
+                        dragStartAngle = -atan2(
                             y = circleCenter.x - offset.x,
                             x = circleCenter.y - offset.y
                         ) * (180f / PI.toFloat())
@@ -63,7 +63,7 @@ fun Scale(
                         y = circleCenter.x - change.position.x,
                         x = circleCenter.y - change.position.y
                     ) * (180f / PI.toFloat())
-                    val newAngle = oldAngle.floatValue + (touchAngel - dragStartAngle.floatValue)
+                    val newAngle = oldAngle.floatValue + (touchAngel - dragStartAngle)
                     angle = newAngle.coerceIn(
                         minimumValue = initialWeight - maxWeight.toFloat(),
                         maximumValue = initialWeight - minWeight.toFloat()
@@ -72,7 +72,6 @@ fun Scale(
                         initialWeight - angle.toInt()
                     )
                 }
-
             }
     ) {
         center = this.center // center of the canvas
@@ -106,9 +105,10 @@ fun Scale(
         }
         // 20<= i <= 250
         for (i in minWeight..maxWeight) {
-            // 20 - 80 + 0-90 -120
+
             val angleInRad = (i - initialWeight + angle - 90) * (PI / 180f).toFloat()
 
+            // draw lines per kg in the scale
             val lineType = when {
                 i % 10 == 0 -> LineType.TEN_STEP
                 i % 5 == 0 -> LineType.FIVE_STEP
@@ -127,7 +127,6 @@ fun Scale(
                 else -> style.tenStepLineLength
             }
 
-
             val lineStart = Offset(
                 x = (outerRadius - lineLength.toPx()) * cos(angleInRad) + circleCenter.x,
                 y = (outerRadius - lineLength.toPx()) * sin(angleInRad) + circleCenter.y
@@ -138,7 +137,14 @@ fun Scale(
                 y = outerRadius * sin(angleInRad) + circleCenter.y
             )
 
+            drawLine(
+                color = lineColor,
+                start = lineStart,
+                end = lineEnd,
+                strokeWidth = 1.dp.toPx()
+            )
 
+            // draw text for every 10 kh
             drawContext.canvas.nativeCanvas.apply {
                 if (lineType == LineType.TEN_STEP) {
                     val textRadius =
@@ -160,16 +166,11 @@ fun Scale(
                                 textAlign = Paint.Align.CENTER
                             }
                         )
-                    }
+                    } // end rotation body
                 }
             }
 
-            drawLine(
-                color = lineColor,
-                start = lineStart,
-                end = lineEnd,
-                strokeWidth = 1.dp.toPx()
-            )
+
 
             val middleTop = Offset(
                 x = circleCenter.x,
@@ -197,9 +198,7 @@ fun Scale(
                 path = indicator,
                 color = style.scaleIndicatorColor
             )
-
         }
     } // end canvas
-
 
 }
