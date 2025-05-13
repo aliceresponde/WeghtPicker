@@ -105,7 +105,6 @@ fun Scale(
         }
         // 20<= i <= 250
         for (i in minWeight..maxWeight) {
-
             val angleInRad = (i - initialWeight + angle - 90) * (PI / 180f).toFloat()
 
             // draw lines per kg in the scale

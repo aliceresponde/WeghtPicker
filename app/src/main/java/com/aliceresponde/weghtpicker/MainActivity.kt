@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
                     .fillMaxSize()
             ) {
 
-                Text("Select your weight\n ${weight}",
+                Text("Select your weight\n ${weight} Kg",
                     modifier = Modifier
                         .align(Alignment.Center),
                     style = TextStyle(
